@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fallow — Reclaim Mac disk space, safely</title>
+<meta name="description" content="Fallow is a native macOS cleaner where every deletion is reviewed, explained and reversible. Built for developers: Xcode, simulators, Flutter, Gradle, npm, Homebrew, Docker.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>">
+<style>
+:root{--bg:#fbfaf6;--fg:#1c1b17;--mute:#6b675c;--card:#fff;--line:#e8e4d8;--acc:#3f7d3a;--acc2:#c9a227;--warn:#b7791f;--bad:#b83b3b;--code:#f1eee3}
+@media (prefers-color-scheme:dark){:root{--bg:#12130f;--fg:#efede4;--mute:#a09c8d;--card:#1a1c16;--line:#2b2d24;--acc:#7fc178;--acc2:#e0bd4a;--warn:#e0a94a;--bad:#e27b7b;--code:#22241c}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif}
+a{color:inherit}.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
+nav b{font-size:20px;letter-spacing:-.02em}nav a{text-decoration:none;color:var(--mute);margin-left:20px;font-size:15px}nav a:hover{color:var(--fg)}
+.hero{text-align:center;padding:56px 0 40px}
+.pill{display:inline-block;border:1px solid var(--line);background:var(--card);border-radius:99px;padding:4px 14px;font-size:13px;color:var(--mute)}
+h1{font-size:clamp(38px,7vw,68px);line-height:1.05;letter-spacing:-.035em;margin:20px 0 16px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:620px;margin:0 auto 28px;color:var(--mute);font-size:19px}
+.btn{display:inline-block;padding:12px 22px;border-radius:12px;font-weight:600;text-decoration:none;border:1px solid var(--line);background:var(--card)}
+.btn.p{background:var(--acc);color:#fff;border-color:var(--acc)}@media (prefers-color-scheme:dark){.btn.p{color:#0c1a0b}}
+/* app mock */
+.mock{margin:48px auto 0;max-width:820px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 30px 70px -30px rgba(0,0,0,.35);overflow:hidden;text-align:left}
+.bar{display:flex;gap:7px;padding:12px 14px;border-bottom:1px solid var(--line)}.bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}.bar i:nth-child(2){background:#febc2e}.bar i:nth-child(3){background:#28c840}
+.mbody{display:grid;grid-template-columns:170px 1fr}
+.side{border-right:1px solid var(--line);padding:14px;font-size:13px;color:var(--mute)}.side div{padding:6px 8px;border-radius:7px}.side .on{background:var(--code);color:var(--fg);font-weight:600}
+.list{padding:16px 18px}.list h4{margin:0 0 10px;font-size:15px}
+.row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.row small{display:block;color:var(--mute);font-size:12px}
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}.safe{background:#3f7d3a22;color:var(--acc)}.rev{background:#b7791f22;color:var(--warn)}.cau{background:#b83b3b22;color:var(--bad)}
+.tot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-weight:600}
+.tot span{background:var(--acc);color:#fff;border-radius:8px;padding:6px 14px;font-size:13px}@media (prefers-color-scheme:dark){.tot span{color:#0c1a0b}}
+section{padding:72px 0}section h2{font-size:clamp(28px,4.5vw,40px);letter-spacing:-.025em;line-height:1.15;margin:0 0 10px;text-align:center}
+.sub{text-align:center;color:var(--mute);max-width:600px;margin:0 auto 40px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}.card h3{margin:8px 0 6px;font-size:18px}.card p{margin:0;color:var(--mute);font-size:15px}.ic{font-size:26px}
+.steps{counter-reset:s}.steps .card::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700}@media (prefers-color-scheme:dark){.steps .card::before{color:#0c1a0b}}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.chips span{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:15px}
+.alt{background:var(--code)}
+ol.rules{max-width:720px;margin:0 auto;padding-left:22px;color:var(--mute)}ol.rules li{margin:8px 0}ol.rules b{color:var(--fg)}
+pre{max-width:720px;margin:24px auto 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+footer{border-top:1px solid var(--line);padding:32px 0;text-align:center;color:var(--mute);font-size:14px}
+@media(max-width:640px){.mbody{grid-template-columns:1fr}.side{display:none}nav a{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><b>🌾 Fallow</b><div><a href="#trust">Trust</a><a href="#dev">Developers</a><a href="#how">How it works</a><a href="https://github.com/suraj-shetty/Fallow">GitHub</a></div></nav>
+
+<header class="hero">
+<span class="pill">Native macOS · Swift · macOS 14+</span>
+<h1>Get your space back.<br><em>Break nothing.</em></h1>
+<p class="lead">Fallow clears the caches and leftovers that regrow safely. Every item is explained, every deletion is reviewed first, and everything goes to the Trash.</p>
+<a class="btn p" href="https://github.com/suraj-shetty/Fallow">View on GitHub</a>
+<a class="btn" href="#how">See how it works</a>
+
+<div class="mock" aria-label="Illustration of the Fallow review screen">
+<div class="bar"><i></i><i></i><i></i></div>
+<div class="mbody">
+<div class="side"><div>Overview</div><div class="on">Review</div><div>Disk map</div><div>Apps</div><div>Projects</div><div>History</div></div>
+<div class="list"><h4>Review · 3 items selected</h4>
+<div class="row"><div>Xcode DerivedData<small>Build products. Xcode rebuilds them when needed.</small></div><span class="tag safe">SAFE</span><b>24.1 GB</b></div>
+<div class="row"><div>Old simulator runtime<small>Removed with <code>xcrun simctl</code>, not by deleting folders.</small></div><span class="tag rev">REVIEW</span><b>11.8 GB</b></div>
+<div class="row"><div>node_modules in idle project<small>Next to package.json. Not touched in 14+ days, nothing tracked by git.</small></div><span class="tag safe">SAFE</span><b>3.2 GB</b></div>
+<div class="tot"><div>Total to Trash · 39.1 GB</div><span>Move to Trash</span></div>
+</div></div></div>
+<p style="color:var(--mute);font-size:13px;margin-top:10px">Illustration; sizes are examples.</p>
+</header>
+</div>
+
+<section id="trust"><div class="wrap">
+<h2>Built on trust, not a “Clean” button</h2>
+<p class="sub">Safety lives in the engine, not the interface, so no screen can skip it.</p>
+<div class="grid">
+<div class="card"><div class="ic">🔍</div><h3>Review before remove</h3><p>Nothing is deleted until a sheet lists every item and the total. Dry run changes nothing.</p></div>
+<div class="card"><div class="ic">🗑️</div><h3>Trash first</h3><p>Items are moved to the Trash. History lets you restore them. Permanent delete needs a setting and a second confirmation.</p></div>
+<div class="card"><div class="ic">💬</div><h3>Every item explains itself</h3><p>What it is, why it’s safe, whether it regenerates, plus a risk level: safe, review or caution.</p></div>
+<div class="card"><div class="ic">🛡️</div><h3>PathGuard</h3><p>A protected-path guard in the core library sits in front of every deletion. Symlinks never lead out of a rule’s root.</p></div>
+</div></div></section>
+
+<section id="dev" class="alt"><div class="wrap">
+<h2>Made for developer Macs</h2>
+<p class="sub">Developer caches quietly reach 50–150 GB. Fallow knows what is safe to clear and which tool should do it.</p>
+<div class="chips"><span>Xcode DerivedData</span><span>Simulators &amp; runtimes</span><span>Swift Package Manager</span><span>CocoaPods</span><span>Flutter</span><span>Gradle / Android</span><span>npm</span><span>Homebrew</span><span>Docker</span></div>
+<pre>$ fallow scan
+$ fallow clean --dry-run --json   # the CLI never moves or deletes</pre>
+</div></section>
+
+<section id="how"><div class="wrap">
+<h2>Scan. Review. Reclaim.</h2><p class="sub">Three steps, and you stay in control of each one.</p>
+<div class="grid steps">
+<div class="card"><h3>Scan</h3><p>Smart Scan runs every enabled rule, streams progress and can be cancelled at any time.</p></div>
+<div class="card"><h3>Review</h3><p>Safe items are pre-selected; Review and Caution items are not. Check the list and the total.</p></div>
+<div class="card"><h3>Reclaim</h3><p>Items move to the Trash. Each is re-checked just before, and skipped if it changed since the scan.</p></div>
+</div></div></section>
+
+<section class="alt"><div class="wrap">
+<h2>More than a cleaner</h2><p class="sub">One app instead of five separate tools.</p>
+<div class="grid">
+<div class="card"><h3>Disk map</h3><p>Sunburst drill-down and a large &amp; old files finder.</p></div>
+<div class="card"><h3>Uninstaller &amp; leftovers</h3><p>Remove apps with their support files. Leftovers favour precision: a lone settings file is never offered.</p></div>
+<div class="card"><h3>Project cleanup</h3><p>Skips projects active in the last 14 days and anything git tracks.</p></div>
+<div class="card"><h3>Exact duplicates</h3><p>Hash-verified loose user files only. The kept copy must still match at clean time.</p></div>
+<div class="card"><h3>Menu bar &amp; schedules</h3><p>Free space at a glance and low-disk alerts. Notify only: Fallow never cleans on its own.</p></div>
+<div class="card"><h3>Honest about macOS</h3><p>Purgeable space and APFS snapshots are shown as information, never claimed as freed.</p></div>
+</div></div></section>
+
+<section><div class="wrap">
+<h2>The rules it can’t break</h2><p class="sub">Enforced in code and covered by tests on temporary fixture folders.</p>
+<ol class="rules">
+<li><b>Trash by default.</b> Permanent delete only behind a setting and a second confirmation.</li>
+<li><b>No removal without Review.</b> Every item and the total are listed first.</li>
+<li><b>Re-check before deleting.</b> Changed since the scan means skipped.</li>
+<li><b>Tool-owned data goes through its tool.</b> Simulators use <code>xcrun simctl</code>.</li>
+<li><b>No volume crossing</b> unless you picked the volume.</li>
+</ol></div></section>
+
+<section class="alt"><div class="wrap" style="text-align:center">
+<h2>In development</h2>
+<p class="sub">Fallow is not publicly released yet. Follow the project and read the specs on GitHub.</p>
+<a class="btn p" href="https://github.com/suraj-shetty/Fallow">Fallow on GitHub</a>
+</div></section>
+
+<footer><div class="wrap">🌾 Fallow — farmland left to rest so it recovers. Native macOS, Swift 6, macOS 14+.</div></footer>
+</body>
+</html>
